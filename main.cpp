@@ -8,8 +8,14 @@ using namespace std;
 
 struct Kontakt
 {
-    int id;
+    int id, idUzytkownika;
     string imie, nazwisko, numerTelefonu, adresEmail, adresZamieszkania;
+};
+
+struct Uzytkownik
+{
+    int idUzytkownika;
+    string login, haslo;
 };
 
 int odczytZPliku (vector<Kontakt> &kontakty, int &id)
@@ -40,21 +46,24 @@ int odczytZPliku (vector<Kontakt> &kontakty, int &id)
             {
             case 1:
                 kontakty[i].id = atoi(wycietaFraza.c_str());
-                id = kontakty[i].id;
+                //id = kontakty[i].id;
                 break;
             case 2:
-                kontakty[i].imie = wycietaFraza;
+                kontakty[i].idUzytkownika = atoi(wycietaFraza.c_str());
                 break;
             case 3:
-                kontakty[i].nazwisko = wycietaFraza;
+                kontakty[i].imie = wycietaFraza;
                 break;
             case 4:
-                kontakty[i].numerTelefonu = wycietaFraza;
+                kontakty[i].nazwisko = wycietaFraza;
                 break;
             case 5:
-                kontakty[i].adresEmail = wycietaFraza;
+                kontakty[i].numerTelefonu = wycietaFraza;
                 break;
             case 6:
+                kontakty[i].adresEmail = wycietaFraza;
+                break;
+            case 7:
                 kontakty[i].adresZamieszkania = wycietaFraza;
                 break;
 
@@ -76,6 +85,7 @@ void zapiszDoPliku (vector<Kontakt> &kontakty, int liczbaKontaktow)
     fstream plik;
     plik.open("ksiazka_adresowa.txt", ios::out | ios::app);
     plik << kontakty[liczbaKontaktow].id << pipe;
+    plik << kontakty[liczbaKontaktow].idUzytkownika << pipe;
     plik << kontakty[liczbaKontaktow].imie << pipe;
     plik << kontakty[liczbaKontaktow].nazwisko << pipe;
     plik << kontakty[liczbaKontaktow].numerTelefonu << pipe;
@@ -186,7 +196,7 @@ void wyswietlKontakty (vector<Kontakt> &kontakty, int liczbaKontaktow)
     else komunikatBrakKontaktow();
 }
 
-int dodajKontakt (vector<Kontakt> &kontakty, int liczbaKontaktow, int &id)
+int dodajKontakt (vector<Kontakt> &kontakty, int liczbaKontaktow, int &id, int idUzytkownika)
 {
     system("cls");
     char pipe = '|';
@@ -229,6 +239,7 @@ int dodajKontakt (vector<Kontakt> &kontakty, int liczbaKontaktow, int &id)
 
     kontakty.push_back(Kontakt());
     kontakty[liczbaKontaktow].id = id;
+    kontakty[liczbaKontaktow].idUzytkownika = idUzytkownika;
     kontakty[liczbaKontaktow].imie = imie;
     kontakty[liczbaKontaktow].nazwisko = nazwisko;
     kontakty[liczbaKontaktow].numerTelefonu = numerTelefonu;
@@ -417,49 +428,176 @@ void edytujKontakt (vector<Kontakt> &kontakty, int liczbaKontaktow, int &id)
     }
     else komunikatBrakKontaktow();
 }
+//
+//void wlaczKsiazke (int idUzytkownika)
+//{
+//    int liczbaKontaktow = 0;
+//    vector<Kontakt>kontakty;
+//    char wybor;
+//    int id = 0, wylogowujaca = 0;
+//    liczbaKontaktow = odczytZPliku (kontakty, id);
+//
+////INTERFEJS______________________________________
+//    while(wylogowujaca == 0)
+//    {
+//        system("cls");
+//        cout << "KSIAZKA ADRESOWA" << endl;
+//        cout << "1. Dodaj adresata" << endl;
+//        cout << "2. Wyszukaj po imieniu" << endl;
+//        cout << "3. Wyszukaj po nazwisku" << endl;
+//        cout << "4. Wyswietl wszystkich adresatow" << endl;
+//        cout << "5. Usun adresata" << endl;
+//        cout << "6. Edytuj adresata" << endl;
+//        cout << "7. Wyloguj" << endl;
+//        cout << "9. Zakoncz program" << endl;
+//        cout << "Twoj wybor: " << endl;
+//        cin >> wybor;
+//
+//        switch (wybor)
+//        {
+//        case '1':
+//            liczbaKontaktow = dodajKontakt(kontakty, liczbaKontaktow, id, idUzytkownika);
+//            break;
+//        case '2':
+//            wyszukajPoImieniu(kontakty, liczbaKontaktow);
+//            break;
+//        case '3':
+//            wyszukajPoNazwisku(kontakty, liczbaKontaktow);
+//            break;
+//        case '4':
+//            wyswietlKontakty(kontakty, liczbaKontaktow);
+//            break;
+//        case '5':
+//            liczbaKontaktow = usunKontakt(kontakty, liczbaKontaktow, id);
+//            break;
+//        case '6':
+//            edytujKontakt(kontakty, liczbaKontaktow, id);
+//            break;
+//        case '7':
+//            wylogowujaca++;
+//            break;
+//        case '9':
+//            exit(0);
+//            break;
+//        }
+//    }
+//}
+
+void zapiszDoPlikuUzytkownicy (vector<Uzytkownik> &uzytkownicy, int liczbaUzytkownikow)
+{
+    char pipe = '|';
+    fstream plik;
+    plik.open("uzytkownicy.txt", ios::out | ios::app);
+    plik << uzytkownicy[liczbaUzytkownikow].idUzytkownika << pipe;
+    plik << uzytkownicy[liczbaUzytkownikow].login << pipe;
+    plik << uzytkownicy[liczbaUzytkownikow].haslo << pipe << endl;
+    plik.close();
+}
+
+int odczytZPlikuUzytkownicy (vector<Uzytkownik> &uzytkownicy, int &idUzytkownika)
+{
+    int nrPipe = 0;
+    int i = 0;
+    char pipe = '|';
+    string wycietaFraza = "";
+    string linia;
+    fstream plik;
+
+    plik.open("uzytkownicy.txt", ios::in);
+    if(plik.good() == false)
+    {
+        cout << "Plik uzytkownicy.txt nie istnieje!";
+    }
+    while(getline(plik,linia))
+    {
+        uzytkownicy.push_back(Uzytkownik());
+        while(linia!="")
+        {
+            size_t pozycja = linia.find(pipe);
+            wycietaFraza = linia.substr(0,pozycja);
+            linia.erase(0,pozycja+1);
+            nrPipe++;
+
+            switch(nrPipe)
+            {
+            case 1:
+                uzytkownicy[i].idUzytkownika = atoi(wycietaFraza.c_str());
+                //idUzytkownika = uzytkownicy[i].idUzytkownika;
+                break;
+            case 2:
+                uzytkownicy[i].login = wycietaFraza;
+                break;
+            case 3:
+                uzytkownicy[i].haslo = wycietaFraza;
+                break;
+            }
+            wycietaFraza = "";
+        }
+        idUzytkownika = uzytkownicy[i].idUzytkownika;
+        i++;
+        nrPipe = 0;
+    }
+    plik.close();
+
+    return idUzytkownika;
+}
+
+int dodajUzytkownika (vector<Uzytkownik> &uzytkownicy, int liczbaUzytkownikow, int &idUzytkownika)
+{
+    system("cls");
+    char pipe = '|';
+    string login, haslo;
+    cout << "Podaj login" << endl;
+    cin >> login;
+
+    for (int i = 0; i < liczbaUzytkownikow; i++)
+    {
+        if (uzytkownicy[i].login == login)
+        {
+            cout << "Taki uzytkownik juz istnieje. Wprowadz inna nazwe uzytkownika:" << endl;
+            cin >> login;
+            i = 0;
+        }
+    }
+    cout << "Podaj haslo" << endl;
+    cin >> haslo;
+
+    idUzytkownika = idUzytkownika+1;
+
+    uzytkownicy.push_back(Uzytkownik());
+    uzytkownicy[liczbaUzytkownikow].idUzytkownika = idUzytkownika;
+    uzytkownicy[liczbaUzytkownikow].login = login;
+    uzytkownicy[liczbaUzytkownikow].haslo = haslo;
+
+    zapiszDoPlikuUzytkownicy(uzytkownicy, liczbaUzytkownikow);
+
+    cout << "Uzytkownik zarejestrowany prawdlowo" << endl;
+    Sleep(1000);
+
+    return liczbaUzytkownikow+1;
+}
+
 
 int main()
 {
-    int liczbaKontaktow = 0;
-    vector<Kontakt>kontakty;
+    int liczbaUzytkownikow = 0;
+    vector<Uzytkownik>uzytkownicy;
     char wybor;
-    int id = 0;
-    liczbaKontaktow = odczytZPliku (kontakty, id);
-
-//INTERFEJS______________________________________
+    int idUzytkownika = 0;
+    liczbaUzytkownikow = odczytZPlikuUzytkownicy (uzytkownicy, idUzytkownika);
+    //INTERFEJS______________________________________
     while(1)
     {
         system("cls");
-        cout << "KSIAZKA ADRESOWA" << endl;
-        cout << "1. Dodaj adresata" << endl;
-        cout << "2. Wyszukaj po imieniu" << endl;
-        cout << "3. Wyszukaj po nazwisku" << endl;
-        cout << "4. Wyswietl wszystkich adresatow" << endl;
-        cout << "5. Usun adresata" << endl;
-        cout << "6. Edytuj adresata" << endl;
-        cout << "9. Zakoncz program" << endl;
+        cout << "MENU GLOWNE" << endl;
+        cout << "1. Rejestracja" << endl;
         cout << "Twoj wybor: " << endl;
         cin >> wybor;
 
         switch (wybor)
         {
         case '1':
-            liczbaKontaktow = dodajKontakt(kontakty, liczbaKontaktow, id);
-            break;
-        case '2':
-            wyszukajPoImieniu(kontakty, liczbaKontaktow);
-            break;
-        case '3':
-            wyszukajPoNazwisku(kontakty, liczbaKontaktow);
-            break;
-        case '4':
-            wyswietlKontakty(kontakty, liczbaKontaktow);
-            break;
-        case '5':
-            liczbaKontaktow = usunKontakt(kontakty, liczbaKontaktow, id);
-            break;
-        case '6':
-            edytujKontakt(kontakty, liczbaKontaktow, id);
+            liczbaUzytkownikow = dodajUzytkownika(uzytkownicy, liczbaUzytkownikow, idUzytkownika);
             break;
         case '9':
             exit(0);
