@@ -22,7 +22,7 @@ void czyPlikIstnieje (string nazwaPliku)
 {
     fstream plik;
     plik.open(nazwaPliku, ios::in);
-    if(plik.good() == false)
+    if(!plik.good())
     {
         cout << "Plik " << nazwaPliku << " nie istnieje!";
     }
