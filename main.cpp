@@ -31,16 +31,16 @@ void czyPlikIstnieje (string nazwaPliku)
 
 Kontakt odczytPojedynczegoKontaktu(Kontakt &kontakt, fstream &plik, string linia)
 {
-    int nrPipe = 0;
+    int nrKreski = 0;
     string wycietaFraza = "";
     while(linia!="")
     {
-        size_t pozycja = linia.find('|');
-        wycietaFraza = linia.substr(0,pozycja);
-        linia.erase(0,pozycja+1);
-        nrPipe++;
+        size_t pozycjaKreski = linia.find('|');
+        wycietaFraza = linia.substr(0,pozycjaKreski);
+        linia.erase(0,pozycjaKreski+1);
+        nrKreski++;
 
-        switch(nrPipe)
+        switch(nrKreski)
         {
         case 1:
             kontakt.id = atoi(wycietaFraza.c_str());
@@ -316,7 +316,6 @@ void wyswietlKontakty (vector<Kontakt> &kontakty, int liczbaKontaktow)
 int dodajKontakt (vector<Kontakt> &kontakty, int liczbaKontaktow, int &id, int idUzytkownika)
 {
     system("cls");
-    char pipe = '|';
     string imie, nazwisko, numerTelefonu, adresEmail, adresZamieszkania;
     cout << "Podaj imie\n";
     imie = wczytajLinie();
@@ -528,7 +527,72 @@ void edytujKontakt (vector<Kontakt> &kontakty, int liczbaKontaktow, int &id)
     else komunikatBrakKontaktow();
 }
 
-void wlaczKsiazke (int idUzytkownika)
+void zapiszDoPlikuUzytkownicy (Uzytkownik &uzytkownik)
+{
+    fstream plik;
+    plik.open("uzytkownicy.txt", ios::out | ios::app);
+    plik << uzytkownik.idUzytkownika << '|';
+    plik << uzytkownik.login << '|';
+    plik << uzytkownik.haslo << '|' << endl;
+    plik.close();
+}
+
+void zmienHaslo (vector<Uzytkownik> &uzytkownicy, int idUzytkownika)
+{
+    system("cls");
+    string stareHaslo = "", noweHaslo = "";
+    Uzytkownik uzytkownik;
+    cout << "ZMIANA HASLA\n";
+    for (vector<Uzytkownik>::iterator itr = uzytkownicy.begin(); itr != uzytkownicy.end(); itr++)
+    {
+        if(itr->idUzytkownika == idUzytkownika)
+        {
+            for (int i = 3; i >= 0; i--)
+            {
+                cout << "Podaj haslo:\n";
+                stareHaslo = wczytajLinie();
+                if (itr->haslo == stareHaslo)
+                {
+                    cout << "Podaj nowe haslo:\n";
+                    noweHaslo = wczytajLinie();
+                    itr->haslo = noweHaslo;
+                    remove("uzytkownicy.txt");
+                    for (vector<Uzytkownik>::iterator itr = uzytkownicy.begin(); itr != uzytkownicy.end(); itr++)
+                    {
+                        uzytkownik.idUzytkownika = itr->idUzytkownika;
+                        uzytkownik.login = itr->login;
+                        uzytkownik.haslo = itr->haslo;
+                        zapiszDoPlikuUzytkownicy(uzytkownik);
+                    }
+                    cout << "Haslo zostalo zmienione.\n";
+                    Sleep(1000);
+                    break;
+                }
+                else
+                {
+                    cout << "\nPodane haslo jest nieprawidlowe.\n";
+                    if (i > 0)
+                    {
+                        if (i == 1)
+                        {
+                            cout << "Uzytkownik zablokowany na 3 s...\n\n";
+                            Sleep(3000);
+                            powrotDoMenu();
+                            break;
+                        }
+                        cout << "Wpisz haslo ponownie, pozostalo prob: " << i-1 << "\n";
+                        continue;
+                    }
+                }
+            }
+        }
+
+    }
+
+
+}
+
+void wlaczKsiazke (int idUzytkownika, vector<Uzytkownik> &uzytkownicy)
 {
     int liczbaKontaktow = 0;
     vector<Kontakt>kontakty;
@@ -540,16 +604,17 @@ void wlaczKsiazke (int idUzytkownika)
     while(wylogowujaca == 0)
     {
         system("cls");
-        cout << "KSIAZKA ADRESOWA" << endl;
-        cout << "1. Dodaj adresata" << endl;
-        cout << "2. Wyszukaj po imieniu" << endl;
-        cout << "3. Wyszukaj po nazwisku" << endl;
-        cout << "4. Wyswietl wszystkich adresatow" << endl;
-        cout << "5. Usun adresata" << endl;
-        cout << "6. Edytuj adresata" << endl;
-        cout << "7. Wyloguj" << endl;
-        cout << "9. Zakoncz program" << endl;
-        cout << "Twoj wybor: " << endl;
+        cout << "KSIAZKA ADRESOWA\n";
+        cout << "1. Dodaj adresata\n";
+        cout << "2. Wyszukaj po imieniu\n";
+        cout << "3. Wyszukaj po nazwisku\n";
+        cout << "4. Wyswietl wszystkich adresatow\n";
+        cout << "5. Usun adresata\n";
+        cout << "6. Edytuj adresata\n";
+        cout << "7. Zmien haslo\n";
+        cout << "8. Wyloguj\n";
+        cout << "9. Zakoncz program\n";
+        cout << "Twoj wybor: \n";
         wybor = wczytajZnak();
 
         switch (wybor)
@@ -573,6 +638,9 @@ void wlaczKsiazke (int idUzytkownika)
             edytujKontakt(kontakty, liczbaKontaktow, idKontaktu);
             break;
         case '7':
+            zmienHaslo(uzytkownicy, idUzytkownika);
+            break;
+        case '8':
             wylogowujaca++;
             break;
         case '9':
@@ -584,22 +652,13 @@ void wlaczKsiazke (int idUzytkownika)
     }
 }
 
-void zapiszDoPlikuUzytkownicy (Uzytkownik &uzytkownik)
-{
-    fstream plik;
-    plik.open("uzytkownicy.txt", ios::out | ios::app);
-    plik << uzytkownik.idUzytkownika << '|';
-    plik << uzytkownik.login << '|';
-    plik << uzytkownik.haslo << '|' << endl;
-    plik.close();
-}
 
 void odczytZPlikuUzytkownicy (vector<Uzytkownik> &uzytkownicy)
 {
     fstream plik;
     string nazwaPliku = "uzytkownicy.txt", wycietaFraza = "", linia = "";
     czyPlikIstnieje(nazwaPliku);
-    int nrPipe = 0;
+    int nrKreski = 0;
     Uzytkownik uzytkownik;
 
     plik.open("uzytkownicy.txt", ios::in);
@@ -607,12 +666,12 @@ void odczytZPlikuUzytkownicy (vector<Uzytkownik> &uzytkownicy)
     {
         while(linia!="")
         {
-            size_t pozycja = linia.find('|');
-            wycietaFraza = linia.substr(0,pozycja);
-            linia.erase(0,pozycja+1);
-            nrPipe++;
+            size_t pozycjaKreski = linia.find('|');
+            wycietaFraza = linia.substr(0,pozycjaKreski);
+            linia.erase(0,pozycjaKreski+1);
+            nrKreski++;
 
-            switch(nrPipe)
+            switch(nrKreski)
             {
             case 1:
                 uzytkownik.idUzytkownika = atoi(wycietaFraza.c_str());
@@ -627,7 +686,7 @@ void odczytZPlikuUzytkownicy (vector<Uzytkownik> &uzytkownicy)
             wycietaFraza = "";
         }
         uzytkownicy.push_back(uzytkownik);
-        nrPipe = 0;
+        nrKreski = 0;
     }
     plik.close();
 }
@@ -648,7 +707,7 @@ void dodajUzytkownika (vector<Uzytkownik> &uzytkownicy)
             login = wczytajLinie();
             itr = uzytkownicy.begin();
         }
-    idUzytkownika = itr->idUzytkownika + 1;
+        idUzytkownika = itr->idUzytkownika + 1;
     }
     cout << "Podaj haslo:" << endl;
     haslo = wczytajLinie();
@@ -691,7 +750,7 @@ void logowanie (vector<Uzytkownik> &uzytkownicy)
                     {
                         cout << "Uzytkownik poprawnie zalogowany.\n";
                         Sleep(1000);
-                        wlaczKsiazke (itr->idUzytkownika);
+                        wlaczKsiazke (itr->idUzytkownika, uzytkownicy);
                         break;
                     }
                     else
@@ -733,7 +792,7 @@ int main()
     char wybor;
     odczytZPlikuUzytkownicy (uzytkownicy);
 
-    while(1)
+    while(true)
     {
         system("cls");
         cout << "MENU GLOWNE" << endl;
