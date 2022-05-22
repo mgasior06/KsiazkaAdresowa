@@ -31,16 +31,16 @@ void czyPlikIstnieje (string nazwaPliku)
 
 Kontakt odczytPojedynczegoKontaktu(Kontakt &kontakt, fstream &plik, string linia)
 {
-    int nrPipe = 0;
+    int nrKreski = 0;
     string wycietaFraza = "";
     while(linia!="")
     {
-        size_t pozycja = linia.find('|');
-        wycietaFraza = linia.substr(0,pozycja);
-        linia.erase(0,pozycja+1);
-        nrPipe++;
+        size_t pozycjaKreski = linia.find('|');
+        wycietaFraza = linia.substr(0,pozycjaKreski);
+        linia.erase(0,pozycjaKreski+1);
+        nrKreski++;
 
-        switch(nrPipe)
+        switch(nrKreski)
         {
         case 1:
             kontakt.id = atoi(wycietaFraza.c_str());
@@ -316,7 +316,6 @@ void wyswietlKontakty (vector<Kontakt> &kontakty, int liczbaKontaktow)
 int dodajKontakt (vector<Kontakt> &kontakty, int liczbaKontaktow, int &id, int idUzytkownika)
 {
     system("cls");
-    char pipe = '|';
     string imie, nazwisko, numerTelefonu, adresEmail, adresZamieszkania;
     cout << "Podaj imie\n";
     imie = wczytajLinie();
@@ -659,7 +658,7 @@ void odczytZPlikuUzytkownicy (vector<Uzytkownik> &uzytkownicy)
     fstream plik;
     string nazwaPliku = "uzytkownicy.txt", wycietaFraza = "", linia = "";
     czyPlikIstnieje(nazwaPliku);
-    int nrPipe = 0;
+    int nrKreski = 0;
     Uzytkownik uzytkownik;
 
     plik.open("uzytkownicy.txt", ios::in);
@@ -667,12 +666,12 @@ void odczytZPlikuUzytkownicy (vector<Uzytkownik> &uzytkownicy)
     {
         while(linia!="")
         {
-            size_t pozycja = linia.find('|');
-            wycietaFraza = linia.substr(0,pozycja);
-            linia.erase(0,pozycja+1);
-            nrPipe++;
+            size_t pozycjaKreski = linia.find('|');
+            wycietaFraza = linia.substr(0,pozycjaKreski);
+            linia.erase(0,pozycjaKreski+1);
+            nrKreski++;
 
-            switch(nrPipe)
+            switch(nrKreski)
             {
             case 1:
                 uzytkownik.idUzytkownika = atoi(wycietaFraza.c_str());
@@ -687,7 +686,7 @@ void odczytZPlikuUzytkownicy (vector<Uzytkownik> &uzytkownicy)
             wycietaFraza = "";
         }
         uzytkownicy.push_back(uzytkownik);
-        nrPipe = 0;
+        nrKreski = 0;
     }
     plik.close();
 }
