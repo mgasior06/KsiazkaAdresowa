@@ -87,6 +87,8 @@ int odczytZPlikuKsiazkaAdresowa (vector<Kontakt> &kontakty, int &idKontaktu, int
         }
     }
     plik.close();
+    cout << idKontaktu << endl;
+    system("pause");
     return idKontaktu;
 }
 
@@ -104,9 +106,10 @@ void zapiszDoPliku (vector<Kontakt> &kontakty, int liczbaKontaktow)
     plik.close();
 }
 
-void zapisDoPlikuPoUsuwaniu(vector<Kontakt> &kontakty, int idUsuwanegoKontaktu)
+int zapisDoPlikuPoUsuwaniu(vector<Kontakt> &kontakty, int idUsuwanegoKontaktu)
 {
     Kontakt kontakt;
+    int ostatnieId = 0;
 
     fstream plikOdczyt, plikZapis;
     string nazwaPlikuOdczyt = "ksiazka_adresowa.txt";
@@ -132,6 +135,7 @@ void zapisDoPlikuPoUsuwaniu(vector<Kontakt> &kontakty, int idUsuwanegoKontaktu)
             plikZapis << kontakt.adresEmail << '|';
             plikZapis << kontakt.adresZamieszkania << '|' << endl;
             plikZapis.close();
+            ostatnieId = kontakt.id;
         }
         else
         {
@@ -141,6 +145,7 @@ void zapisDoPlikuPoUsuwaniu(vector<Kontakt> &kontakty, int idUsuwanegoKontaktu)
     plikOdczyt.close();
     remove("ksiazka_adresowa.txt");
     rename("ksiazka_adresowa_tymczasowa.txt", "ksiazka_adresowa.txt");
+    return ostatnieId;
 
 }
 
@@ -322,7 +327,6 @@ int dodajKontakt (vector<Kontakt> &kontakty, int liczbaKontaktow, int &id, int i
     cout << "Podaj nazwisko\n";
     nazwisko = wczytajLinie();
 
-
     for (int i = 0; i < liczbaKontaktow; i++)
     {
         if (kontakty[i].imie == imie && kontakty[i].nazwisko == nazwisko)
@@ -349,7 +353,11 @@ int dodajKontakt (vector<Kontakt> &kontakty, int liczbaKontaktow, int &id, int i
     adresEmail = wczytajLinie();
     cout << "Podaj adres zamieszkania\n";
     adresZamieszkania = wczytajLinie();
-    id = id+1;
+
+
+    id = id + 1;
+    cout << "ID do zapisu: " << id << endl;
+    system("pause");
 
     kontakty.push_back(Kontakt());
 
@@ -396,7 +404,7 @@ int usunKontakt(vector<Kontakt> &kontakty, int liczbaKontaktow, int &id)
                     pomocnicza = pomocnicza + 1;
                     kontakty.erase(kontakty.begin() + i);
                     liczbaKontaktow = kontakty.size();
-                    zapisDoPlikuPoUsuwaniu(kontakty, idDoUsuniecia);
+                    id = zapisDoPlikuPoUsuwaniu(kontakty, idDoUsuniecia);
                     cout << "Kontakt usunieto pomyslnie\n";
                     Sleep(1000);
                     break;
@@ -651,7 +659,6 @@ void wlaczKsiazke (int idUzytkownika, vector<Uzytkownik> &uzytkownicy)
         }
     }
 }
-
 
 void odczytZPlikuUzytkownicy (vector<Uzytkownik> &uzytkownicy)
 {
