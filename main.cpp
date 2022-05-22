@@ -792,7 +792,7 @@ int main()
     char wybor;
     odczytZPlikuUzytkownicy (uzytkownicy);
 
-    while(1)
+    while(true)
     {
         system("cls");
         cout << "MENU GLOWNE" << endl;
