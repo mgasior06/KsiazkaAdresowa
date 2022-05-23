@@ -87,8 +87,6 @@ int odczytZPlikuKsiazkaAdresowa (vector<Kontakt> &kontakty, int &idKontaktu, int
         }
     }
     plik.close();
-    cout << idKontaktu << endl;
-    system("pause");
     return idKontaktu;
 }
 
@@ -254,6 +252,7 @@ void wyszukajPoImieniu (vector<Kontakt> &kontakty, int liczbaKontaktow)
     string imie;
     char wybor;
     int pomocnicza = 0;
+    cout << "WYSZUKIWANIE KONTAKTU PO IMIENIU\n\n";
     if (liczbaKontaktow > 0)
     {
         cout << "Wpisz imie: ";
@@ -282,6 +281,7 @@ void wyszukajPoNazwisku (vector<Kontakt> &kontakty, int liczbaKontaktow)
     string nazwisko;
     char wybor;
     int pomocnicza = 0;
+    cout << "WYSZUKIWANIE KONTAKTU PO NAZWISKU\n\n";
     if (liczbaKontaktow > 0)
     {
         cout << "Wpisz nazwisko: ";
@@ -307,6 +307,7 @@ void wyszukajPoNazwisku (vector<Kontakt> &kontakty, int liczbaKontaktow)
 void wyswietlKontakty (vector<Kontakt> &kontakty, int liczbaKontaktow)
 {
     system("cls");
+    cout << "SPIS KONTAKTOW:\n\n";
     if (liczbaKontaktow > 0)
     {
         for (int i = 0; i < liczbaKontaktow; i++)
@@ -322,6 +323,7 @@ int dodajKontakt (vector<Kontakt> &kontakty, int liczbaKontaktow, int &id, int i
 {
     system("cls");
     string imie, nazwisko, numerTelefonu, adresEmail, adresZamieszkania;
+    cout << "DODAWANIE NOWEGO KONTAKTU\n\n";
     cout << "Podaj imie\n";
     imie = wczytajLinie();
     cout << "Podaj nazwisko\n";
@@ -354,10 +356,7 @@ int dodajKontakt (vector<Kontakt> &kontakty, int liczbaKontaktow, int &id, int i
     cout << "Podaj adres zamieszkania\n";
     adresZamieszkania = wczytajLinie();
 
-
     id = id + 1;
-    cout << "ID do zapisu: " << id << endl;
-    system("pause");
 
     kontakty.push_back(Kontakt());
 
@@ -384,7 +383,7 @@ int usunKontakt(vector<Kontakt> &kontakty, int liczbaKontaktow, int &id)
     int idDoUsuniecia = 0;
     fstream plik;
     char wybor;
-
+    cout << "USUWANIE KONTAKTU\n\n";
 
     if (liczbaKontaktow > 0)
     {
@@ -485,6 +484,8 @@ void edytujKontakt (vector<Kontakt> &kontakty, int liczbaKontaktow, int &id)
     int idDoEdycji = 0;
     char wybor;
 
+    cout << "EDYTOWANIE KONTAKTU\n\n";
+
     if (liczbaKontaktow > 0)
     {
         cout << "Podaj ID uzytkowanika, ktorego chcesz edytowac:\n";
@@ -550,7 +551,7 @@ void zmienHaslo (vector<Uzytkownik> &uzytkownicy, int idUzytkownika)
     system("cls");
     string stareHaslo = "", noweHaslo = "";
     Uzytkownik uzytkownik;
-    cout << "ZMIANA HASLA\n";
+    cout << "ZMIANA HASLA\n\n";
     for (vector<Uzytkownik>::iterator itr = uzytkownicy.begin(); itr != uzytkownicy.end(); itr++)
     {
         if(itr->idUzytkownika == idUzytkownika)
@@ -612,7 +613,7 @@ void wlaczKsiazke (int idUzytkownika, vector<Uzytkownik> &uzytkownicy)
     while(wylogowujaca == 0)
     {
         system("cls");
-        cout << "KSIAZKA ADRESOWA\n";
+        cout << "KSIAZKA ADRESOWA\n\n";
         cout << "1. Dodaj adresata\n";
         cout << "2. Wyszukaj po imieniu\n";
         cout << "3. Wyszukaj po nazwisku\n";
@@ -704,6 +705,7 @@ void dodajUzytkownika (vector<Uzytkownik> &uzytkownicy)
     Uzytkownik uzytkownik;
     int idUzytkownika = 1;
     string login, haslo;
+    cout << "DODAWANIE NOWEGO UZYTKOWNIKA\n\n";
     cout << "Podaj login" << endl;
     login = wczytajLinie();
     for (vector<Uzytkownik>::iterator itr = uzytkownicy.begin(); itr != uzytkownicy.end(); itr++)
